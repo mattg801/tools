@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Loan Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column; /* Use column layout */
+            justify-content: flex-start; /* Align content to the top */
+            min-height: 100vh; /* Ensure the body takes at least full height */
+            background-color: #f4f4f9;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+        }
+        .left-div {
+            width: 30%;
+            padding: 20px;
+            background-color: #f2f2f2;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .calculator {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-width: 2px;
+            border-color: #007BFF;
+        }
+        label, input, button {
+            margin: 5px 0;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 0;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        h3 {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+        .button-group {
+            margin-top: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .value-display {
+            font-size: 16px;
+            font-weight: bold;
+            margin-left: 10px;
+            flex: 1;
+        }
+        .input-container {
+            width: 60%;
+        }
+        .rate-buttons {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: -30px;
+        }
+        .rate-buttons button {
+            background-color: #007BFF;
+            border: 1px solid #007BFF;
+            font-size: 18px;
+            padding: 5px 5px;
+            cursor: pointer;
+            margin-left: 5px;
+            color: white;
+            border-radius: 5px;
+        }
+        .rate-buttons button:hover {
+            background-color: #0056b3;
+        }
+        footer {
+    margin-top: auto; /* Push footer to the bottom */
+    text-align: center;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left div for user inputs -->
+        <div class="left-div">
+            <h2>Loan Details</h2>
+            
+            <div class="input-group">
+                <div class="input-container">
+                    <label for="purchasePrice">Purchase Price ($):</label>
+                    <input type="text" id="purchasePrice" placeholder="Enter purchase price" value="300000" oninput="updateFields('purchasePrice')">
+                </div>
+                <div id="purchasePriceValue" class="value-display"></div> <!-- Value next to input -->
+            </div>
+
+            <div class="input-group">
+                <div class="input-container">
+                    <label for="downPaymentPercent">Down Payment Percent (%):</label>
+                    <input type="text" id="downPaymentPercent" placeholder="Down payment %" oninput="updateFields('downPaymentPercent')">
+                </div>
+                <div id="downPaymentPercentValue" class="value-display"></div> <!-- Value next to input -->
+            </div>
+            
+            <div class="input-group">
+                <div class="input-container">
+                    <label for="downPaymentAmount">Down Payment Amount ($):</label>
+                    <input type="text" id="downPaymentAmount" placeholder="Down payment amount" oninput="updateFields('downPaymentAmount')">
+                </div>
+                <div id="downPaymentAmountValue" class="value-display"></div> <!-- Value next to input -->
+            </div>
+            
+            <div class="input-group">
+                <div class="input-container">
+                    <label for="loanAmountInput">Loan Amount ($):</label>
+                    <input type="text" id="loanAmountInput" placeholder="Loan amount" oninput="updateFields('loanAmountInput')">
+                </div>
+                <div id="loanAmountInputValue" class="value-display"></div> <!-- Value next to input -->
+            </div>
+            
+            <div class="input-group">
+                <div class="input-container">
+                    <label for="ltv">LTV (%):</label>
+                    <input type="text" id="ltv" placeholder="LTV" oninput="updateFields('ltv')">
+                </div>
+                <div id="ltvValue" class="value-display"></div> <!-- Value next to input -->
+            </div>
+        </div> 
+
+        <!-- Mortgage Calculator -->
+        <div class="calculator">
+            <h1>Matt's<br> Mortgage Calculator</h1>
+
+            <label for="loanAmount">Loan Amount ($):</label>
+            <input type="text" id="loanAmount" placeholder="Loan Amount" oninput="updateMortgageLoanAmount()" value="0">
+            
+            <label for="rate">Interest Rate (%):</label>
+            <div style="display: flex; align-items: center;">
+                <input type="number" step="0.01" id="rate" placeholder="Enter interest rate" value="7" oninput="calculateMortgage()">
+                <div class="rate-buttons">
+                    <button onclick="adjustRate(1)" style="width: 30px;">&#x2191;</button> <!-- Up arrow -->
+                    <button onclick="adjustRate(-1)" style="width: 30px;">&#x2193;</button> <!-- Down arrow -->
+                </div>
+            </div>
+
+            <label for="term">Term (Years):</label>
+            <input type="number" id="term" placeholder="Enter loan term" value="30" oninput="calculateMortgage()">
+
+            <div class="button-group">
+                <button onclick="clearFields()">Clear</button>
+            </div>
+
+            <h3>Monthly Payment: <span id="paymentAmount">$0.00</span></h3>
+        </div>
+    </div>
+
+    <script>
+        // Predefined increments for the decimal portion of the interest rate
+        const rateIncrements = [0.00, 0.125, 0.25, 0.375, 0.50, 0.625, 0.75, 0.875, 0.99];
+
+        // Format number with commas
+        function formatNumber(input) {
+            let value = input.value.replace(/,/g, '');
+            if (!isNaN(value) && value !== "") {
+                input.value = Number(value).toLocaleString();
+            }
+        }
+
+        // Update fields within the loan details div
+        function updateFields(updatedField) {
+            let purchasePrice = parseFloat(document.getElementById('purchasePrice').value.replace(/,/g, ''));
+            let downPaymentPercent = parseFloat(document.getElementById('downPaymentPercent').value);
+            let downPaymentAmount = parseFloat(document.getElementById('downPaymentAmount').value.replace(/,/g, ''));
+            let loanAmountInput = parseFloat(document.getElementById('loanAmountInput').value.replace(/,/g, ''));
+            let ltv = parseFloat(document.getElementById('ltv').value);
+
+            if (isNaN(purchasePrice)) purchasePrice = 0;
+            if (isNaN(downPaymentPercent)) downPaymentPercent = 0;
+            if (isNaN(downPaymentAmount)) downPaymentAmount = 0;
+            if (isNaN(loanAmountInput)) loanAmountInput = 0;
+            if (isNaN(ltv)) ltv = 0;
+
+            // Recalculate values based on the updated field
+            if (updatedField === 'purchasePrice') {
+                if (purchasePrice > 0) {
+                    if (downPaymentPercent > 0) {
+                        downPaymentAmount = (purchasePrice * downPaymentPercent) / 100;
+                        loanAmountInput = purchasePrice - downPaymentAmount;
+                        ltv = (loanAmountInput / purchasePrice) * 100;
+                    }
+                    if (downPaymentAmount > 0) {
+                        downPaymentPercent = (downPaymentAmount / purchasePrice) * 100;
+                        loanAmountInput = purchasePrice - downPaymentAmount;
+                        ltv = (loanAmountInput / purchasePrice) * 100;
+                    }
+                }
+            } else if (updatedField === 'downPaymentPercent') {
+                if (purchasePrice > 0 && downPaymentPercent > 0) {
+                    downPaymentAmount = (purchasePrice * downPaymentPercent) / 100;
+                    loanAmountInput = purchasePrice - downPaymentAmount;
+                    ltv = (loanAmountInput / purchasePrice) * 100;
+                }
+            } else if (updatedField === 'downPaymentAmount') {
+                if (purchasePrice > 0 && downPaymentAmount > 0) {
+                    downPaymentPercent = (downPaymentAmount / purchasePrice) * 100;
+                    loanAmountInput = purchasePrice - downPaymentAmount;
+                    ltv = (loanAmountInput / purchasePrice) * 100;
+                }
+            } else if (updatedField === 'loanAmountInput') {
+                if (purchasePrice > 0 && loanAmountInput > 0) {
+                    downPaymentAmount = purchasePrice - loanAmountInput;
+                    downPaymentPercent = (downPaymentAmount / purchasePrice) * 100;
+                    ltv = (loanAmountInput / purchasePrice) * 100;
+                }
+            } else if (updatedField === 'ltv') {
+                if (purchasePrice > 0 && ltv > 0) {
+                    loanAmountInput = (ltv / 100) * purchasePrice;
+                    downPaymentAmount = purchasePrice - loanAmountInput;
+                    downPaymentPercent = (downPaymentAmount / purchasePrice) * 100;
+                }
+            }
+
+            // Update the fields on the page
+            document.getElementById('purchasePriceValue').textContent = purchasePrice.toLocaleString();
+            document.getElementById('downPaymentPercentValue').textContent = downPaymentPercent.toFixed(2) + '%';
+            document.getElementById('downPaymentAmountValue').textContent = downPaymentAmount.toLocaleString();
+            document.getElementById('loanAmountInputValue').textContent = loanAmountInput.toLocaleString();
+            document.getElementById('ltvValue').textContent = ltv.toFixed(2) + '%';
+
+            // Update loan amount in the mortgage calculator without resetting it
+            if (loanAmountInput > 0) {
+                document.getElementById("loanAmount").value = loanAmountInput.toLocaleString();
+            }
+
+            calculateMortgage();
+        }
+
+        // Allow user to directly override the loan amount in the mortgage calculator
+        function updateMortgageLoanAmount() {
+            let loanAmount = parseFloat(document.getElementById("loanAmount").value.replace(/,/g, ''));
+            if (isNaN(loanAmount) || loanAmount <= 0) {
+                document.getElementById("loanAmount").value = '';
+            }
+            calculateMortgage();
+        }
+
+        // Adjust rate based on predefined increments
+        function adjustRate(delta) {
+            let currentRate = parseFloat(document.getElementById("rate").value);
+            let wholeNumber = Math.floor(currentRate);
+            let decimalPart = currentRate - wholeNumber;
+
+            // Find the closest increment in the array
+            let closestIncrement = rateIncrements.reduce((prev, curr) => {
+                return Math.abs(curr - decimalPart) < Math.abs(prev - decimalPart) ? curr : prev;
+            });
+
+            if (delta < 0) {
+                let newDecimalIndex = rateIncrements.indexOf(closestIncrement) - 1;
+                if (newDecimalIndex < 0) {
+                    wholeNumber -= 1;
+                    newDecimalIndex = rateIncrements.length - 1;
+                }
+                decimalPart = rateIncrements[newDecimalIndex];
+            } else {
+                let newDecimalIndex = rateIncrements.indexOf(closestIncrement) + 1;
+                if (newDecimalIndex >= rateIncrements.length) {
+                    wholeNumber += 1;
+                    newDecimalIndex = 0;
+                }
+                decimalPart = rateIncrements[newDecimalIndex];
+            }
+
+            let newRate = wholeNumber + decimalPart;
+            document.getElementById("rate").value = newRate.toFixed(3);
+            calculateMortgage();
+        }
+
+        // Calculate the mortgage payment based on loan amount, rate, and term
+        function calculateMortgage() {
+            let loanAmount = parseFloat(document.getElementById("loanAmount").value.replace(/,/g, ''));
+            let rate = parseFloat(document.getElementById("rate").value) / 100 / 12;
+            let term = parseFloat(document.getElementById("term").value) * 12;
+
+            if (isNaN(loanAmount) || loanAmount <= 0 || isNaN(rate) || isNaN(term)) {
+                document.getElementById("paymentAmount").textContent = "$0.00";
+                return;
+            }
+
+            let monthlyPayment = loanAmount * rate / (1 - Math.pow(1 + rate, -term));
+            document.getElementById("paymentAmount").textContent = "$" + monthlyPayment.toFixed(2);
+        }
+
+        // Clear all fields
+        function clearFields() {
+            document.getElementById("purchasePrice").value = '';
+            document.getElementById("downPaymentPercent").value = '';
+            document.getElementById("downPaymentAmount").value = '';
+            document.getElementById("loanAmountInput").value = '';
+            document.getElementById("ltv").value = '';
+
+            document.getElementById("loanAmount").value = '';
+            document.getElementById("rate").value = '7';
+            document.getElementById("term").value = '30';
+
+            document.getElementById("paymentAmount").textContent = "$0.00";
+            updateFields();
+        }
+    </script>
+</body>
+<footer style="text-align: center;">
+    &copy; 2024 Matt Gollihur - All Rights Reserved
+</footer>
+</html>
